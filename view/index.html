@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+
+
+<h2>Chat Messages</h2>
+
+<ul id="messages"></ul>
+
+
+<!-- 
+
+<div class="container">
+  <img src="/images/bandmember.jpg" alt="Avatar" style="width:100%;">
+  <p>Sweet! So, what do you wanna do today?</p>
+  <span class="time-right">11:02</span>
+</div>
+
+<div class="container darker">
+  <img src="/images/avatar_g2.jpg" alt="Avatar" style="width:100%;">
+  <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
+  <span class="time-left">11:05</span>
+</div> -->
+
+
+
+
+
+
+
+
+
+<button class="open-button" onclick="openForm()">Chat</button>
+
+<div class="chat-popup" id="myForm">
+  <form action="" class="form-container">
+    <h1>Chat</h1>
+
+    <label for="msg"><b>Message</b></label>
+    <textarea id="m" placeholder="Type message.." name="msg" required></textarea>
+
+    <button type="submit" class="btn">Send</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </form>
+</div>
+
+<script>
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+</script>
+
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+
+<script>
+  $(function () {
+    var socket = io();
+    $('form').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      socket.emit('chat message', $('#m').val());
+      $('#m').val('');
+      return false;
+    });
+    socket.on('chat message', function(msg){
+      var html = '<div class="container darker"> <img src="/images/avatar_g2.jpg" alt="Avatar" class="right" style="width:100%;"> <p>'+msg+'</p> <span class="time-left">11:01</span> </div>';
+
+      $('#messages').append($('<li>').html(html));
+    });
+
+    
+    socket.on("send_db_data",function (rows){
+          var html1 ='';
+          for (var i = 0; i < rows.length; i++) {
+
+            html1 += '<li><div class="container darker"> <img src="/images/avatar_g2.jpg" alt="Avatar" class="right" style="width:100%;"> <p>'+rows[i].note+'</p> <span class="time-left">'+rows[i].created_at+'</span> </div>';
+             console.log(rows[i].created_at);
+          }
+         $("#messages").html(html1);
+    });
+    
+
+  });
+</script>
+
+
+
+
+</body>
+</html>
